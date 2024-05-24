@@ -1,1 +1,1 @@
-# Pipeline-for-scRNA-seq-and-scATAC-seq-analysis
+# A pipeline for scRNA-seq and scATAC-seq analysis
