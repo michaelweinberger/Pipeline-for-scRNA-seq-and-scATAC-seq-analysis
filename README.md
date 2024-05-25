@@ -1,12 +1,12 @@
 # A pipeline for scRNA-seq and scATAC-seq analysis
 ---
 Use this pipeline to analyse scRNA-seq and scATAC-seq datasets:
-- Mapping of scRNA-seq data via [Cellranger](https://www.10xgenomics.com/support/software/cell-ranger/latest/tutorials/cr-tutorial-ct) and of scATAC-seq data via [Cellranger-atac](https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/using/count)
-- Clustering, marker identification, cell type annotation and visualisation of scRNA-seq data via [Scanpy](https://scanpy.readthedocs.io/en/stable/) or [Seurat](https://satijalab.org/seurat/)
-- Removal of scRNA-seq doublets with [DoubletDetection](https://github.com/JonathanShor/DoubletDetection?tab=readme-ov-file) (as part of Scanpy analysis) or [DoubletFinder](https://github.com/chris-mcginnis-ucsf/DoubletFinder) (as part of Seurat analysis)
-- Sample integration in scRNA-seq and scATAC-seq data via [Harmony](https://github.com/immunogenomics/harmony)
-- mRNA velocity analysis via [velocyto](http://velocyto.org/velocyto.py/tutorial/cli.html#run10x-run-on-10x-chromium-samples) and [scvelo](https://scvelo.readthedocs.io/en/stable/)
-- Clustering, cell type label transfer and visualisation of scATAC-seq data via [Signac](https://stuartlab.org/signac/)
+- scRNA-seq mapping via [Cellranger](https://www.10xgenomics.com/support/software/cell-ranger/latest/tutorials/cr-tutorial-ct) and scATAC-seq mapping via [Cellranger-atac](https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/using/count)
+- Clustering, marker identification, cell type annotation and visualisation of scRNA-seq data via [Scanpy](https://scanpy.readthedocs.io/en/stable/)1 or [Seurat](https://satijalab.org/seurat/)2
+- Removal of scRNA-seq doublets with [DoubletDetection](https://github.com/JonathanShor/DoubletDetection?tab=readme-ov-file)3 (as part of Scanpy analysis) or [DoubletFinder](https://github.com/chris-mcginnis-ucsf/DoubletFinder)4 (as part of Seurat analysis)
+- Sample integration in scRNA-seq and scATAC-seq data via [Harmony](https://github.com/immunogenomics/harmony)5
+- mRNA velocity analysis via [velocyto](http://velocyto.org/velocyto.py/tutorial/cli.html#run10x-run-on-10x-chromium-samples)6 and [scvelo](https://scvelo.readthedocs.io/en/stable/)7
+- Clustering, cell type label transfer and visualisation of scATAC-seq data via [Signac](https://stuartlab.org/signac/)8
 
 
 ## Usage
@@ -72,11 +72,22 @@ To run the pipeline:
 - `n_dims`   Indicates the number of dimensions to use for neighbourhood graph
 - `harmony_var_ATAC`   Indicates the name of the metadata column to perform data integration on
 - `leiden_res_ATAC`   Indicates the clustering resolution to be used
-- `scRNA_path`   Optional file path to a cell type annotated Scanpy (file ending ".h5ad") or Seurat (file ending ".rds") scRNA-seq object, to be used for cell type label transfer to scATAC-seq data. Object metadata need to contain a column named "cell_type" (cell type labels). If you would like to use the output of the scRNA-seq analysis above for cell type label transfer, set `scRNA_path` to  ${out_dir}/scanpy/{project}_scRNAseq_no_doublets_annotated.h5ad if Scanpy analysis has been run, or to ${out_dir}/seurat/{project}_scRNAseq_no_doublets_annotated.rds if Seurat analysis has been run.
+- `scRNA_path`   Optional file path to a cell type annotated Scanpy (file ending ".h5ad") or Seurat (file ending ".rds") scRNA-seq object, to be used for cell type label transfer to scATAC-seq data. Object metadata need to contain a column named "cell_type" (cell type labels). If you would like to use the output of the scRNA-seq analysis above for cell type label transfer, set `scRNA_path` to  ${out_dir}/scanpy/${project}_scRNAseq_no_doublets_annotated.h5ad if Scanpy analysis has been run, or to ${out_dir}/seurat/${project}_scRNAseq_no_doublets_annotated.rds if Seurat analysis has been run.
 
 3. Finally, start the analysis via
 ```
 sbatch 1_PARENT_script.sh
 ```
 It might be best to first run the "scRNA_mapping" and "scRNA_clustering" parts of the pipeline, and then to create an annotation .csv file, based on the "[project]_markers" .csv (Scanpy analysis) or .xlsx (Seurat analysis) file and the "leiden" (Scanpy analysis) or "res" (Seurat analysis) UMAP plot. Then supply the annotation file as `cluster_anno` to the "scRNA_annotation" part, run scRNA-seq annotation, mRNA velocity analysis and scATAC-seq analysis.
+
+
+1.	Wolf, F.A., Angerer, P., and Theis, F.J. (2018). SCANPY: large-scale single-cell gene expression data analysis. Genome Biol 19, 15. 10.1186/s13059-017-1382-0.
+2.	Hao, Y., Hao, S., Andersen-Nissen, E., Mauck, W.M., 3rd, Zheng, S., Butler, A., Lee, M.J., Wilk, A.J., Darby, C., Zager, M., et al. (2021). Integrated analysis of multimodal single-cell data. Cell 184, 3573-3587 e3529. 10.1016/j.cell.2021.04.048.
+3.	Gayoso, Adam, Shor, Jonathan, Carr, Ambrose J., Sharma, Roshan, Pe'er, Dana (2020, December 18). DoubletDetection (Version v3.0). Zenodo. http://doi.org/10.5281/zenodo.2678041
+4.	McGinnis, C.S., Murrow, L.M., and Gartner, Z.J. (2019). DoubletFinder: Doublet Detection in Single-Cell RNA Sequencing Data Using Artificial Nearest Neighbors. Cell Syst 8, 329-337 e324. 10.1016/j.cels.2019.03.003.
+5.	Korsunsky, I., Millard, N., Fan, J., Slowikowski, K., Zhang, F., Wei, K., Baglaenko, Y., Brenner, M., Loh, P.R., and Raychaudhuri, S. (2019). Fast, sensitive and accurate integration of single-cell data with Harmony. Nat Methods 16, 1289-1296. 10.1038/s41592-019-0619-0.
+6.	La Manno, G., Soldatov, R., Zeisel, A., Braun, E., Hochgerner, H., Petukhov, V., Lidschreiber, K., Kastriti, M.E., Lonnerberg, P., Furlan, A., et al. (2018). RNA velocity of single cells. Nature 560, 494-498. 10.1038/s41586-018-0414-6.
+7.	Bergen, V., Lange, M., Peidli, S., Wolf, F.A., and Theis, F.J. (2020). Generalizing RNA velocity to transient cell states through dynamical modeling. Nat Biotechnol 38, 1408-1414. 10.1038/s41587-020-0591-3.
+8.	Stuart, T., Srivastava, A., Madad, S., Lareau, C.A., and Satija, R. (2021). Single-cell chromatin state analysis with Signac. Nat Methods 18, 1333-1341. 10.1038/s41592-021-01282-5.
+
 
