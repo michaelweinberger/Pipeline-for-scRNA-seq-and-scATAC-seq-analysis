@@ -81,6 +81,7 @@ sbatch 1_PARENT_script.sh
 It might be best to first run the "scRNA_mapping" and "scRNA_clustering" parts of the pipeline, and then to create an annotation .csv file, based on the "[project]_markers" .csv (Scanpy analysis) or .xlsx (Seurat analysis) file and the "leiden" (Scanpy analysis) or "res" (Seurat analysis) UMAP plot. Then supply the annotation file as `cluster_anno` to the "scRNA_annotation" part, run scRNA-seq annotation, mRNA velocity analysis and scATAC-seq analysis.
 
 
+## References
 1.	Wolf, F.A., Angerer, P., and Theis, F.J. (2018). SCANPY: large-scale single-cell gene expression data analysis. Genome Biol 19, 15. 10.1186/s13059-017-1382-0.
 2.	Hao, Y., Hao, S., Andersen-Nissen, E., Mauck, W.M., 3rd, Zheng, S., Butler, A., Lee, M.J., Wilk, A.J., Darby, C., Zager, M., et al. (2021). Integrated analysis of multimodal single-cell data. Cell 184, 3573-3587 e3529. 10.1016/j.cell.2021.04.048.
 3.	Gayoso, Adam, Shor, Jonathan, Carr, Ambrose J., Sharma, Roshan, Pe'er, Dana (2020, December 18). DoubletDetection (Version v3.0). Zenodo. http://doi.org/10.5281/zenodo.2678041
