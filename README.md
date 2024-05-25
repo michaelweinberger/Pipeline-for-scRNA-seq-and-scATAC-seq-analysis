@@ -1,12 +1,12 @@
 # A pipeline for scRNA-seq and scATAC-seq analysis
 ---
 Use this pipeline to analyse scRNA-seq and scATAC-seq datasets:
-- Mapping of scRNA-seq data via [Cellranger] (https://www.10xgenomics.com/support/software/cell-ranger/latest/tutorials/cr-tutorial-ct) and of scATAC-seq data via [Cellranger-atac] (https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/using/count)
-- Clustering, marker identification, cell type annotation and visualisation of scRNA-seq data via [Scanpy] (https://scanpy.readthedocs.io/en/stable/) or [Seurat] (https://satijalab.org/seurat/)
-- Removal of scRNA-seq doublets with [DoubletDetection] (https://github.com/JonathanShor/DoubletDetection?tab=readme-ov-file) (as part of Scanpy analysis) or [DoubletFinder] (https://github.com/chris-mcginnis-ucsf/DoubletFinder) (as part of Seurat analysis)
-- Sample integration in scRNA-seq and scATAC-seq data via [Harmony] (https://github.com/immunogenomics/harmony)
-- mRNA velocity analysis via [velocyto] (http://velocyto.org/velocyto.py/tutorial/cli.html#run10x-run-on-10x-chromium-samples) and [scvelo] (https://scvelo.readthedocs.io/en/stable/)
-- Clustering, cell type label transfer and visualisation of scATAC-seq data via [Signac] (https://stuartlab.org/signac/)
+- Mapping of scRNA-seq data via [Cellranger](https://www.10xgenomics.com/support/software/cell-ranger/latest/tutorials/cr-tutorial-ct) and of scATAC-seq data via [Cellranger-atac](https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/using/count)
+- Clustering, marker identification, cell type annotation and visualisation of scRNA-seq data via [Scanpy](https://scanpy.readthedocs.io/en/stable/) or [Seurat](https://satijalab.org/seurat/)
+- Removal of scRNA-seq doublets with [DoubletDetection](https://github.com/JonathanShor/DoubletDetection?tab=readme-ov-file) (as part of Scanpy analysis) or [DoubletFinder](https://github.com/chris-mcginnis-ucsf/DoubletFinder) (as part of Seurat analysis)
+- Sample integration in scRNA-seq and scATAC-seq data via [Harmony](https://github.com/immunogenomics/harmony)
+- mRNA velocity analysis via [velocyto](http://velocyto.org/velocyto.py/tutorial/cli.html#run10x-run-on-10x-chromium-samples) and [scvelo](https://scvelo.readthedocs.io/en/stable/)
+- Clustering, cell type label transfer and visualisation of scATAC-seq data via [Signac](https://stuartlab.org/signac/)
 
 
 ## Usage
