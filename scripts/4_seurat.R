@@ -345,8 +345,7 @@ markers_seurat <- function(seurat_obj, out_dir, project_name, idents="seurat_clu
   top_markers <- as.data.frame(seurat_obj.markers %>% group_by(cluster) %>% top_n(n = n_markers, wt = avg_log2FC))
   for (i in unique(top_markers$cluster)) {
     write.xlsx(top_markers[top_markers$cluster == i,], sheetName=paste("cluster_",i,sep=""),
-               file=paste(out_dir, "/", project_name, "_top_", n_markers, 
-                          "_marker_genes_clusters.xlsx", sep=""),
+               file=paste(out_dir, "/", project_name, "_markers.xlsx", sep=""),
                append=TRUE, row.names = FALSE)
   }
   

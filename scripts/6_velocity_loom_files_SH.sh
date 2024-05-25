@@ -23,7 +23,7 @@
 
 
 module load python-cbrg
-module load samtools
+module load samtools/1.17
 
 
 

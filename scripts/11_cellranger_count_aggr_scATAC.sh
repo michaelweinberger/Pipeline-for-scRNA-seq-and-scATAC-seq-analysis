@@ -25,7 +25,7 @@ md5sum_dirs_ATAC=(
 
 
 
-module load cellranger-atac
+module load cellranger-atac/2.1.0
 
 
 

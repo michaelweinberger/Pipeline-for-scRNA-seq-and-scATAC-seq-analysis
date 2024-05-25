@@ -80,10 +80,10 @@ min_cells=3
 # indicate the number of principal components to use for neighbourhood graph
 n_pcs=30
 
-# indicate the name of the metadata column to perform sample integration on
+# indicate the name of the metadata column to perform data integration on
 harmony_var="sample_id"
 
-# indicate the Leiden clustering resolution to be used
+# indicate the clustering resolution to be used
 leiden_res=0.4
 
 
@@ -99,7 +99,7 @@ cluster_anno="/ceph/project/tsslab/mweinber/tmp/out_single_cell/scanpy/Farbehi_a
 
 # supply path to a clustered scanpy (file ending ".h5ad") or seurat (file ending ".rds") object,
 # scanpy object metadata need to contain "leiden" column with cell cluster labels, seurat object metadata need to contain "seurat_clusters" column.  
-# Does not need to be supplied if scRNA-seq annotation (above) has been run, in which case the generated output object will be used.
+# Does not need to be supplied if scRNA-seq clustering (above) has been run, in which case the generated output object will be used.
 scRNA_annotation_input=""
 
 
@@ -146,7 +146,7 @@ scATAC_clustering="Yes"
 # Does not need to be supplied if scATAC-seq Mapping (above) has been run, in which case the generated mapping output will be used.
 fragments_file="/ceph/project/tsslab/mweinber/2023_datasets/datasets_scATACseq/Wang_et_al_10.1016j.celrep.2020.108472/GSE153479_fragments.tsv.gz"
 
-# supply path to a metadata .tsv file containing cell barcodes as row names, a "sample_id" column of sample identifiers (for sample integration), and optional metadata columns.
+# supply path to a metadata .tsv file containing a "barcode" column with cell barcodes, a "sample_id" column with sample identifiers (for data integration), and optional metadata columns.
 # Does not need to be supplied if scATAC-seq mapping (above) has been run, in which case the generated mapping outputs will be used.
 metadata_ATAC="/ceph/project/tsslab/mweinber/2023_datasets/datasets_scATACseq/Wang_et_al_10.1016j.celrep.2020.108472/signac/Wang_metadata_ATAC_barcodes.tsv"
 
@@ -171,14 +171,14 @@ tss_enrichment=3
 # indicate the number of dimensions to use for neighbourhood graph
 n_dims=30
 
-# indicate the name of the metadata column to perform sample integration on
+# indicate the name of the metadata column to perform data integration on
 harmony_var_ATAC="sample_id"
 
-# indicate the Leiden clustering resolution to be used
+# indicate the clustering resolution to be used
 leiden_res_ATAC=0.4
 
 
-# (optional) supply filepath to Seurat (file ending ".rds") or Scanpy (file ending ".h5ad") scRNA-seq object to be used for cell type annotation of scATAC-seq data, metadata needs to contain a column "cell_type" with cell type annotation.
+# (optional) supply filepath to Seurat (file ending ".rds") or Scanpy (file ending ".h5ad") scRNA-seq object to be used for cell type annotation of scATAC-seq data, metadata need to contain a column "cell_type" with cell type annotation.
 # If you would like to use the output of the scRNA-seq analysis above for cell type label transfer,
 # set scRNA_path to (if scRNA_analysis parameter is "scanpy"): ${out_dir}/scanpy/{project}_scRNAseq_no_doublets_annotated.h5ad 
 # (no quotation marks)

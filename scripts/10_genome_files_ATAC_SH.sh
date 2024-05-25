@@ -21,7 +21,7 @@
 
 
 module load samtools/1.17
-module load cellranger-atac
+module load cellranger-atac/2.1.0
 
 
 
