@@ -25,7 +25,7 @@ script_dir="/ceph/project/tsslab/mweinber/tmp/scripts_single_cell"
 
 # specify output directory
 # if directory does not exist, it will be generated
-out_dir="/ceph/project/tsslab/mweinber/tmp/out_single_cell"
+out_dir="/ceph/project/tsslab/mweinber/2023_datasets/datasets_scRNAseq/Wang_et_al_10.1016j.celrep.2020.108472"
 
 # specify species ("human", "mouse", "zebrafish")
 species="mouse"
@@ -91,7 +91,7 @@ leiden_res=0.4
 ##############   scRNA-seq Annotation + Visualization   ##############
 
 # indicate if scRNA-seq annotation should be run ("Yes" or "No")
-scRNA_annotation="No"
+scRNA_annotation="Yes"
 
 # supply a .csv file containing a "cluster" column with cell cluster numbers and a "cell_type" column with cell type labels,
 # optionally include an "order" column with integers indicating the order in which cell types should appear in plot legends
@@ -140,7 +140,7 @@ sample_info_ATAC=""
 ##############   scATAC-seq Clustering + Annotation  ##############
 
 # indicate if scATAC-seq clustering should be run ("Yes" or "No")
-scATAC_clustering="Yes"
+scATAC_clustering="No"
 
 # supply path to a cellranger-ATAC output "fragments.tsv.gz" file.
 # Does not need to be supplied if scATAC-seq Mapping (above) has been run, in which case the generated mapping output will be used.
@@ -233,12 +233,9 @@ fi
 
 
 
-## download genome files
-# check if directory for genome files exists, if not create it using mkdir
+## check if directory for genome files exists, if not create it using mkdir
 genome_dir=${out_dir}/genomes
 [ ! -d "$genome_dir" ] && mkdir -p "$genome_dir"
-
-source ${script_dir}/2_genome_files_SH.sh
 
 
 
@@ -247,6 +244,9 @@ cellranger_dir=${out_dir}/cellranger
 [ ! -d "$cellranger_dir" ] && mkdir -p "$cellranger_dir"
 
 if [ "$scRNA_mapping" == "Yes" ] ; then
+
+	# download genome files
+	source ${script_dir}/2_genome_files_SH.sh
 
 	prefix_aggr=$project
 	source ${script_dir}/3_cellranger_count_aggr.sh
@@ -359,11 +359,12 @@ fi
 
 
 ## perform scATAC-seq mapping
-# download genome files
-source ${script_dir}/10_genome_files_ATAC_SH.sh
-
-# perform mapping
 if [ "$scATAC_mapping" == "Yes" ] ; then
+
+	# download genome files
+	source ${script_dir}/10_genome_files_ATAC_SH.sh
+
+	# perform mapping
 	prefix_aggr=$project
 	source ${script_dir}/11_cellranger_count_aggr_ATAC.sh
 fi

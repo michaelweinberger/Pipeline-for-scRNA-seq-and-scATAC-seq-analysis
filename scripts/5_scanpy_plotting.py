@@ -111,48 +111,72 @@ def obs_bar(adata, column_1, column_2, out_dir, out_name,
 
 
 
+
+
 ### Analysis
     
-print(f"Adding annotation to {in_file}")   
 sc.settings.plot_suffix = f"_scanpy_{out_name}"
 sc.settings.figdir = out_dir
 
 
-# read in clustered Anndata object
-adata = sc.read_h5ad(in_file)
+if not os.path.isfile(f"{out_dir}/{out_name}_scRNAseq_no_doublets_annotated.h5ad"):
 
-
-# add cell type annotation
-annotation_df = pd.read_csv(annotation_file)
-annotation_df['cluster'] = annotation_df['cluster'].astype(str)
-
-tmp_df = adata.obs.merge(annotation_df, left_on='leiden', right_on='cluster', how='left', sort=False)
-tmp_df.index = tmp_df['barcode']
-#check_order = adata.obs.index.equals(tmp_df.index)
-#print(f".obs order after including metadata matches: {check_order}")
-adata.obs = tmp_df
-adata.obs.index.name = None
+    print(f"Adding annotation to {in_file}")
     
+    # read in clustered Anndata object
+    adata = sc.read_h5ad(in_file)
 
-# adjust plotting order
-if 'order' in annotation_df.columns:
-    annotation_df = annotation_df.sort_values(by = ['order'])
-    adata.obs['cell_type'] = pd.Categorical(values=adata.obs.cell_type, categories=annotation_df['cell_type'].unique(), 
+    # add cell type annotation
+    annotation_df = pd.read_csv(annotation_file)
+    annotation_df['cluster'] = annotation_df['cluster'].astype(str)
+
+    tmp_df = adata.obs.merge(annotation_df, left_on='leiden', right_on='cluster', how='left', sort=False)
+    tmp_df.index = tmp_df['barcode']
+    #check_order = adata.obs.index.equals(tmp_df.index)
+    #print(f".obs order after including metadata matches: {check_order}")
+    adata.obs = tmp_df
+    adata.obs.index.name = None
+    
+    # adjust plotting order
+    if 'order' in annotation_df.columns:
+        annotation_df = annotation_df.sort_values(by = ['order'])
+        adata.obs['cell_type'] = pd.Categorical(values=adata.obs.cell_type, categories=annotation_df['cell_type'].unique(), 
                                             ordered=True)
+    # drop unnamed columns from metadata
+    adata.obs = adata.obs.loc[:, ~adata.obs.columns.str.contains('^Unnamed')]
 
-# drop unnamed columns from metadata
-adata.obs = adata.obs.loc[:, ~adata.obs.columns.str.contains('^Unnamed')]
+    # plot umap with metadata overlay
+    for col in adata.obs.columns:
+        if col != 'barcode':
+            if col != 'cluster':
+                sc.pl.umap(adata, color=[col], 
+                           legend_loc='right margin', title='', frameon=False, ncols=1, 
+                           save=f"_{col}.png")
+
+    # save final dataset
+    adata.write(f"{out_dir}/{out_name}_scRNAseq_no_doublets_annotated.h5ad", compression='gzip')
+else:
+    adata = sc.read_h5ad(f"{out_dir}/{out_name}_scRNAseq_no_doublets_annotated.h5ad")
 
 
-# plot umap with metadata overlay
-for col in adata.obs.columns:
-    if col != 'barcode':
-        if col != 'cluster':
-            sc.pl.umap(adata, color=[col], 
-                       legend_loc='right margin', title='', frameon=False, ncols=1, 
-                       save=f"_{col}.png")
+# save object with entire count matrix for scVI integration
+if not os.path.isfile(f"{out_dir}/{out_name}_scRNAseq_no_doublets_annotated_scVI.h5ad"):
 
-
-# save final dataset
-adata.write(f"{out_dir}/{out_name}_scRNAseq_no_doublets_annotated.h5ad", compression='gzip')
-
+    # read in dataset with count matrix containing all genes
+    adata_1 = sc.read_h5ad(f"{out_dir}/{out_name}.h5ad")
+    adata_1.obs = adata_1.obs[['barcode']]
+    
+    # add metadata of analysed dataset
+    tmp_df = adata_1.obs.merge(adata.obs, on='barcode', how='left', sort=False)
+    tmp_df.index = tmp_df['barcode']
+    check_order = adata_1.obs.index.equals(tmp_df.index)
+    print(f"{out_name} .obs order after including metadata matches: {check_order}")
+    adata_1.obs = tmp_df
+    adata_1.obs.index.name = None
+    adata_1 = adata_1[adata_1.obs['cell_type'].notna()]
+    
+    # save final dataset
+    adata_1.write(f"{out_dir}/{out_name}_scRNAseq_no_doublets_annotated_scVI.h5ad", compression='gzip')
+    
+    
+    
