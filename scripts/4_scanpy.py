@@ -397,12 +397,3 @@ if not os.path.isfile(f"{out_dir}/{out_name}_scRNAseq_analysed_no_doublets.h5ad"
     adata.obs.to_csv(f"{out_dir}/{out_name}_obs.csv")
     adata.write(f"{out_dir}/{out_name}_scRNAseq_analysed_no_doublets.h5ad", compression='gzip')
 
-
-
-
-
-
-
-
-
-
