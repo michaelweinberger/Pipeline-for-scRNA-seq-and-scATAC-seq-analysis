@@ -52,8 +52,8 @@ To run the pipeline:
 
 ### scRNA-seq mRNA velocity analysis
 - `scRNA_velocity`   Indicates if scRNA-seq clustering should be run ("Yes" or "No")
-- `scRNA_velocity_cellranger_dir`   File path to a directory containing Cellranger "path/to outs/possorted_genome_bam.bam" scRNA-seq mapping BAM files. If the scRNA-seq mapping part of the pipeline has been run, this variable does not need to be supplied and the mapping outputs generated will automatically be used for analysis.
-- `scvelo_input`   File path to a clustered Scanpy (with file ending ".h5ad") or Seurat (with file ending ".rds") object. Cell barcodes in the object should match those in the Cellranger output BAM files supplied. Object metadata need to contain columns named "barcode" (cell barcodes) and "cell_type" (cell type labels). If the scRNA-seq annotation part of the pipeline has been run, this variable does not need to be supplied and the annotated object generated will automatically be used for analysis.
+- `scRNA_velocity_cellranger_dir`   File path to a directory containing Cellranger "path/to outs/possorted_genome_bam.bam" scRNA-seq mapping BAM files. Will be used to generate count matrices of spliced and unspliced reads. If the scRNA-seq mapping part of the pipeline has been run, this variable does not need to be supplied and the mapping outputs generated will automatically be used for analysis.
+- `scvelo_input`   File path to a clustered Scanpy (with file ending ".h5ad") or Seurat (with file ending ".rds") object. Cell barcodes in the object should match those in the Cellranger output BAM files supplied. Object metadata should contain columns named "barcode" (cell barcodes) and "cell_type" (cell type labels). UMAP coordinate fields should be present. Count data may be normalised and log-transformed. If the scRNA-seq annotation part of the pipeline has been run, this variable does not need to be supplied and the annotated object generated will automatically be used for analysis.
 
 ### scATAC-seq mapping
 - `scATAC_mapping`   Indicates if scATAC-seq mapping via Cellranger-ATAC should be run ("Yes" or "No")
