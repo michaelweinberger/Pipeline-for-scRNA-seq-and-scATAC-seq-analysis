@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar  1 14:31:38 2023
+Merge single sample loom files containing spliced and unspliced read counts
 
-@author: Michael
 """
 
 
 import scvelo as scv
 import glob
 import pandas as pd
+import os
 import argparse
 
 
 ## unpack arguments imported from bash parent script
 parser = argparse.ArgumentParser(description='ADD YOUR DESCRIPTION HERE')
-parser.add_argument('-i','--input_dir', help='Directory containing input files', required=True)
-parser.add_argument('-m','--metadata_dir', help='Directory containing "cellranger_aggr_cell_metadata.tsv" and \
-                    "cellranger_aggr_input.csv" files', required=True)
+parser.add_argument('-i','--input_dir', help='Path to directory containing input loom files', required=True)
+parser.add_argument('-m','--metadata_dir', help='Path to directory containing "cellranger_aggr_cell_metadata.tsv"', required=True)
 
 args = parser.parse_args()
 in_dir = args.input_dir
@@ -24,18 +23,29 @@ meta_dir = args.metadata_dir
 
 
 
-### functions
+### Functions
 
-def merge_loom(in_dir, meta_dir):
-
+def merge_loom(in_dir, meta_dir, out_dir):
+    
+    """
+    Function to merge single sample loom files containing spliced and unspliced read counts
+    
+    Input:
+    in_dir: Path to directory containing loom files to merge,
+            file names should have ".loom" extension
+    meta_dir: Path to directory containing "cellranger_aggr_cell_metadata.tsv" file containing cell metadata,
+              should contain columns named "sample_id" with sample identifiers and "barcode" with cell barcodes
+    out_dir: Path to directory to write output to
+    
+    """
+    
+    # read in cell metadata
     barcode_info_path = glob.glob(meta_dir + '/cellranger_aggr_cell_metadata*.tsv')
     barcode_info = pd.read_table(*barcode_info_path, header=0)
+    
+    # loop over all loom files in in_dir and merge
     loom_files = glob.glob(in_dir + '/*.loom')
-    
-    if in_dir + '/merged.loom' in loom_files:
-        loom_files.remove(in_dir + '/merged.loom')
-    
-    # loop over all loom files in in_dir
+       
     count = 1
     for loom in loom_files:
         
@@ -60,7 +70,6 @@ def merge_loom(in_dir, meta_dir):
         else:
             ldata_merge = ldata_merge.concatenate([ldata])
         
-        #print(ldata_merge.obs)
         count += 1
     
     # reformat cell barcodes in final file
@@ -70,15 +79,17 @@ def merge_loom(in_dir, meta_dir):
     ldata_merge.obs.index = index_new
     print(ldata_merge.obs)
     
-    ldata_merge.write_loom(in_dir + '/merged.loom')
+    ldata_merge.write_loom(out_dir + '/merged.loom')
     
     return(ldata_merge)
     
 
 
 
-### analysis
-loom_merged = merge_loom(in_dir=in_dir, meta_dir=meta_dir)
+### Analysis
+
+if not os.path.isfile(f"{in_dir}/merged.loom"): 
+    loom_merged = merge_loom(in_dir=in_dir, meta_dir=meta_dir, out_dir=in_dir)
 
 
 
