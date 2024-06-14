@@ -109,12 +109,16 @@ scRNA_annotation_input=""
 # indicate if scRNA-seq clustering should be run ("Yes" or "No")
 scRNA_velocity="No"
 
-# supply path to a directory containing cellranger "outs/possorted_genome_bam.bam" scRNA-seq mapping BAM files.
-# Does not need to be supplied if scRNA-seq mapping (above) has been run, in which case the generated mapping outputs will be used.
+# supply path to a directory containing cellranger "outs/possorted_genome_bam.bam" scRNA-seq mapping BAM files,
+#	to generate count matrices of spliced and unspliced reads.
+# Does not need to be supplied if scRNA-seq mapping (above) has been run.
 scRNA_velocity_cellranger_dir=""
 
-# supply path to a clustered scanpy (file ending ".h5ad") or seurat (file ending ".rds") object, cell barcodes should match those in "scRNA_velocity_cellranger_dir" BAM files,
-# object metadata need to contain "barcode" column with cell barcodes and "cell_type" column with cell type labels.  
+# supply path to a scanpy (file ending ".h5ad") or seurat (file ending ".rds") object, 
+# 	cell barcodes should match those in "scRNA_velocity_cellranger_dir" BAM files,
+# 	object metadata need to contain "barcode" column with cell barcodes and "cell_type" column with cell type labels,
+# 	UMAP coordinate fields should be present,
+#	count data may be normalised and log-transformed.  
 # Does not need to be supplied if scRNA-seq annotation (above) has been run, in which case the generated output object will be used.
 scvelo_input=""
 
