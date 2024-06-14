@@ -1,8 +1,7 @@
 #!/usr/bin/python
 """
-Created on Mon Feb 27 22:45:41 2023
+Perform mRNA velocity analysis using scVelo
 
-@author: Michael
 """
 
 
@@ -20,13 +19,13 @@ import argparse
 
 ## unpack arguments imported from bash parent script
 parser = argparse.ArgumentParser(description='ADD YOUR DESCRIPTION HERE')
-parser.add_argument('-i','--input_file', help='Filepath of input Seurat (suffix ".rds") or Anndata object', required=True)
-parser.add_argument('-o','--output_dir', help='Directory for saving output files', required=True)
-parser.add_argument('-mtx','--count_matrix', help='Seurat object expression count matrix file name', required=True)
-parser.add_argument('-md','--meta_data', help='Seurat object metadata file name', required=True)
-parser.add_argument('-g','--genes', help='Seurat object gene name file name', required=True)
-parser.add_argument('-p','--pca', help='Seurat object PCA embedding file name', required=True)
-parser.add_argument('-l','--loom_file', help='Loom file containing spliced/unspliced counts', required=True)
+parser.add_argument('-i','--input_file', help='Path to input Seurat (suffix ".rds") or Anndata (suffix ".h5ad") object', required=True)
+parser.add_argument('-o','--output_dir', help='Path to directory for saving output files', required=True)
+parser.add_argument('-mtx','--count_matrix', help='Path to Seurat object expression count matrix .mtx file', required=True)
+parser.add_argument('-md','--meta_data', help='Path toSeurat object metadata .csv file', required=True)
+parser.add_argument('-g','--genes', help='Path to Seurat object gene name .csv file', required=True)
+parser.add_argument('-p','--pca', help='Path to Seurat object PCA embedding .csv file', required=True)
+parser.add_argument('-l','--loom_file', help='Path to loom file containing spliced/unspliced counts', required=True)
 parser.add_argument('-n','--project_name', help='Name used as prefix for plot files, etc', required=True)
 
 args = parser.parse_args()
@@ -51,6 +50,21 @@ sc.settings.set_figure_params(dpi_save=300, facecolor='white')
 ### functions
 
 def anndata_from_seurat(count_matrix, metadata, genes, pca, out_dir, project_name):
+    
+    """
+    Function to create AnnData object from Seurat-exported data
+    
+    Input:
+    count_matrix: Path to .mtx matrix file containing scRNA-seq read counts,
+                  may be normalised and log-transformed
+    metadata: Path to .csv file containing cell metadata, 
+              should contain a column named "barcode" with cell barcodes
+    genes: Path to .csv file containing column of gene names (one name per row, no column name)
+    pca: Path to .csv file containing cell x PC PCA values, PC names as column names
+    out_dir: Directory to write output to
+    project_name: Name of dataset, will be used in plot and output file names
+    
+    """
                     
     # load sparse matrix:
     counts = io.mmread(count_matrix)
@@ -92,6 +106,20 @@ def anndata_from_seurat(count_matrix, metadata, genes, pca, out_dir, project_nam
 
 def scvelo_analysis(adata, ldata, out_dir, project_name, color_palette=None):
     
+    """
+    Function to perform scRNA-seq mRNA velocity analysis with scVelo
+    
+    Input:
+    adata: scRNA-seq AnnData object, count data may be (but do not need to be) normalised and log-transformed,
+           adata.obsm['X_umap'] and adata.uns['umap'] fields should be present,
+           adata.obs['cell_type'] with cell type labels should be present
+    ldata: AnnData object containing matrices of spliced and unspliced read counts
+    out_dir: Directory to write output to
+    project_name: Name of dataset, will be used in plot and output file names
+    color_palette: List of colors for cell types in plots
+    
+    """
+    
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
     
@@ -106,7 +134,7 @@ def scvelo_analysis(adata, ldata, out_dir, project_name, color_palette=None):
     # merge matrices into the original adata object
     adata1 = scv.utils.merge(adata, ldata)
     
-    # plot umap to check
+    # plot umap to check dataset
     sc.pl.umap(adata1, color=['cell_type'], frameon=False, title=project_name, 
                palette=color_palette, save='_celltypes.pdf')
     
@@ -116,6 +144,12 @@ def scvelo_analysis(adata, ldata, out_dir, project_name, color_palette=None):
     
     # pre-process
     print('Filtering and normalizing')
+    """
+    From the scvelo docs: 
+        "Filtering and normalization is applied in the same vein to 
+        spliced/unspliced counts and X. Logarithmizing is only applied to X. 
+        If X is already preprocessed from former analysis, it will not be touched."
+    """
     scv.pp.filter_and_normalize(adata1, n_top_genes=2000)
     print('Computing moments')
     scv.pp.moments(adata1)
